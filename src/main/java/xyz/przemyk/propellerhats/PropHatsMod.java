@@ -4,6 +4,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -36,12 +40,24 @@ public class PropHatsMod {
     }
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
 
     public PropHatsMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(bus);
+        SOUND_EVENTS.register(bus);
         NetworkHandler.registerMessages();
     }
 
     public static final RegistryObject<PropellerHatItem> BASIC_HAT = ITEMS.register("basic", () -> new PropellerHatItem(PropArmorMaterial.IRON, EquipmentSlotType.HEAD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1)));
+    public static final RegistryObject<SoundEvent> PROPELLER_SOUND_EVENT = SOUND_EVENTS.register("propeller", () -> new SoundEvent(new ResourceLocation(MODID, "propeller")));
+
+    public static boolean isFlying(PlayerEntity player) {
+        ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.HEAD);
+        return !stack.isEmpty() && stack.getItem() instanceof PropellerHatItem && isFlyingIgnoreItemType(player, stack);
+    }
+
+    public static boolean isFlyingIgnoreItemType(PlayerEntity player, ItemStack stack) {
+        return isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false);
+    }
 }

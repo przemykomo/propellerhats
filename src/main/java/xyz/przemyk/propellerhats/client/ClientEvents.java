@@ -10,20 +10,24 @@ import xyz.przemyk.propellerhats.network.FlyPacket;
 import xyz.przemyk.propellerhats.network.NetworkHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class KeybindingHandler {
+public class ClientEvents {
 
     private static boolean lastFlyState = false;
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            if (event.phase == TickEvent.Phase.START) {
                 boolean flyState = mc.gameSettings.keyBindJump.isKeyDown();
                 if (flyState != lastFlyState) {
                     PropHatsMod.setHoldingUp(mc.player, flyState);
                     lastFlyState = flyState;
                     NetworkHandler.INSTANCE.sendToServer(new FlyPacket(flyState));
+                }
+            } else {
+                if (PropHatsMod.isFlying(mc.player) && !PropellerSound.isPlaying(mc.player.getEntityId())) {
+                    mc.getSoundHandler().play(new PropellerSound(mc.player));
                 }
             }
         }

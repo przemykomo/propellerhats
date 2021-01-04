@@ -48,8 +48,7 @@ public class PropellerHatModel extends BipedModel<LivingEntity> {
 
     public void rotate(LivingEntity entity, ItemStack itemStack) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (entity instanceof PlayerEntity && PropHatsMod.isHoldingUp((PlayerEntity) entity) &&
-                itemStack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false)) {
+        if (entity instanceof PlayerEntity && PropHatsMod.isFlyingIgnoreItemType((PlayerEntity) entity, itemStack)) {
             bone.rotateAngleY = (entity.ticksExisted + (minecraft.isGamePaused() ? 0 : minecraft.getRenderPartialTicks())) / 2f;
         }
 

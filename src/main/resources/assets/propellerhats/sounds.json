@@ -1,0 +1,7 @@
+{
+    "propeller": {
+        "category": "player",
+        "sounds": ["propellerhats:propeller"],
+        "subtitle": "subtitle.propellerhats.propeller"
+    }
+}
