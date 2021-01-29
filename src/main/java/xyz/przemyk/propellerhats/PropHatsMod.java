@@ -49,10 +49,10 @@ public class PropHatsMod {
         NetworkHandler.registerMessages();
     }
 
-    public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterial.IRON, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 70_000, 30, 0.1f));
-    public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterial.GOLD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 200_000, 50, 0.3f));
-    public static final RegistryObject<PropellerHatItem> DIAMOND_HAT = ITEMS.register("diamond_hat", () -> new PropellerHatItem(ArmorMaterial.DIAMOND, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 1_000_000, 150, 0.5f));
-    public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterial.NETHERITE, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 10_000_000, 400, 0.6f));
+    public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterial.IRON, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 70_000, 30, 0.08f));
+    public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterial.GOLD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 100_000, 40, 0.13f));
+    public static final RegistryObject<PropellerHatItem> DIAMOND_HAT = ITEMS.register("diamond_hat", () -> new PropellerHatItem(ArmorMaterial.DIAMOND, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 500_000, 150, 0.2f));
+    public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterial.NETHERITE, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 1_000_000, 250, 0.3f));
 
     public static final RegistryObject<SoundEvent> PROPELLER_SOUND_EVENT = SOUND_EVENTS.register("propeller", () -> new SoundEvent(new ResourceLocation(MODID, "propeller")));
 

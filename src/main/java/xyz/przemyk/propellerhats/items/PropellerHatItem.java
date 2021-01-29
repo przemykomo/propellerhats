@@ -86,7 +86,7 @@ public class PropellerHatItem extends ArmorItem {
     public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
         if (PropHatsMod.isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false)) {
             Vector3d motion = player.getMotion();
-            if (motion.y < 0.3) {
+            if (motion.y < speed + 0.2) {
                 player.setMotion(motion.x, motion.y + speed, motion.z);
                 player.fallDistance = 0;
             }
