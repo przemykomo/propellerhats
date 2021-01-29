@@ -19,6 +19,7 @@ public class PropellerSound extends TickableSound {
         super(PropHatsMod.PROPELLER_SOUND_EVENT.get(), SoundCategory.PLAYERS);
         this.player = player;
         this.repeat = true;
+        this.pitch = 1.5f;
         PLAYING_FOR.put(player.getEntityId(), this);
     }
 

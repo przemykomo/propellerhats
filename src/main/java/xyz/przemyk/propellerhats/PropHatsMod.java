@@ -2,6 +2,7 @@ package xyz.przemyk.propellerhats;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.propellerhats.items.PropArmorMaterial;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 import xyz.przemyk.propellerhats.network.NetworkHandler;
 
@@ -49,7 +49,11 @@ public class PropHatsMod {
         NetworkHandler.registerMessages();
     }
 
-    public static final RegistryObject<PropellerHatItem> BASIC_HAT = ITEMS.register("basic", () -> new PropellerHatItem(PropArmorMaterial.IRON, EquipmentSlotType.HEAD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1)));
+    public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterial.IRON, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 70_000, 30, 0.1f));
+    public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterial.GOLD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 200_000, 50, 0.3f));
+    public static final RegistryObject<PropellerHatItem> DIAMOND_HAT = ITEMS.register("diamond_hat", () -> new PropellerHatItem(ArmorMaterial.DIAMOND, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 1_000_000, 150, 0.5f));
+    public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterial.NETHERITE, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 10_000_000, 400, 0.6f));
+
     public static final RegistryObject<SoundEvent> PROPELLER_SOUND_EVENT = SOUND_EVENTS.register("propeller", () -> new SoundEvent(new ResourceLocation(MODID, "propeller")));
 
     public static boolean isFlying(PlayerEntity player) {

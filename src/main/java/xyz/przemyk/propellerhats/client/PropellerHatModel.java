@@ -7,10 +7,12 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
 import xyz.przemyk.propellerhats.PropHatsMod;
 
 public class PropellerHatModel extends BipedModel<LivingEntity> {
+
+    public static final PropellerHatModel INSTANCE = new PropellerHatModel();
+
     private final ModelRenderer main;
     private final ModelRenderer bone;
 

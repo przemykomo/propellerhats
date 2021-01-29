@@ -10,7 +10,6 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -30,20 +29,23 @@ import java.util.List;
 
 public class PropellerHatItem extends ArmorItem {
 
-    public PropellerHatItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builderIn) {
-        super(materialIn, slot, builderIn);
-    }
+    public final int energyCapacity;
+    public final int energyUsage;
+    public final float speed;
 
-    //TODO: move client models somewhere else to not crash the server?
-    public static final LazyValue<PropellerHatModel> model = new LazyValue<>(PropellerHatModel::new);
+    public PropellerHatItem(IArmorMaterial materialIn, Properties builderIn, int energyCapacity, int energyUsage, float speed) {
+        super(materialIn, EquipmentSlotType.HEAD, builderIn);
+        this.energyCapacity = energyCapacity;
+        this.energyUsage = energyUsage;
+        this.speed = speed;
+    }
 
     @SuppressWarnings("unchecked")
     @OnlyIn(Dist.CLIENT)
     @Override
     public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-        PropellerHatModel propellerHatModel = model.getValue();
-        propellerHatModel.rotate(entityLiving, itemStack);
-        return (A) propellerHatModel;
+        PropellerHatModel.INSTANCE.rotate(entityLiving, itemStack);
+        return (A) PropellerHatModel.INSTANCE;
     }
 
     @Nullable
@@ -59,7 +61,7 @@ public class PropellerHatItem extends ArmorItem {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        return new CapabilityProviderEnergy(new ItemEnergyStorage(stack, 10_000));
+        return new CapabilityProviderEnergy(new ItemEnergyStorage(stack, energyCapacity));
     }
 
     @Override
@@ -82,10 +84,10 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
-        if (PropHatsMod.isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(10, false) > 0).orElse(false)) {
+        if (PropHatsMod.isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false)) {
             Vector3d motion = player.getMotion();
             if (motion.y < 0.3) {
-                player.setMotion(motion.x, motion.y + 0.1, motion.z);
+                player.setMotion(motion.x, motion.y + speed, motion.z);
                 player.fallDistance = 0;
             }
         }
