@@ -40,6 +40,10 @@ public class PropellerHatModel extends BipedModel<LivingEntity> {
 
     @Override
     protected Iterable<ModelRenderer> getHeadParts() {
+        main.rotationPointY = bipedHead.rotationPointY;
+        main.rotateAngleZ = bipedHead.rotateAngleZ;
+        main.rotateAngleX = bipedHead.rotateAngleX;
+        main.rotateAngleY = bipedHead.rotateAngleY;
         return ImmutableList.of(main);
     }
 
@@ -53,10 +57,5 @@ public class PropellerHatModel extends BipedModel<LivingEntity> {
         if (entity instanceof PlayerEntity && PropHatsMod.isFlyingIgnoreItemType((PlayerEntity) entity, itemStack)) {
             bone.rotateAngleY = (entity.ticksExisted + (minecraft.isGamePaused() ? 0 : minecraft.getRenderPartialTicks())) / 2f;
         }
-
-        main.rotationPointY = bipedHead.rotationPointY;
-        main.rotateAngleZ = bipedHead.rotateAngleZ;
-        main.rotateAngleX = bipedHead.rotateAngleX;
-        main.rotateAngleY = bipedHead.rotateAngleY;
     }
 }
