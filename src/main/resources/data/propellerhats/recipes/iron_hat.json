@@ -1,0 +1,32 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "iii",
+        "RQR",
+        "BYL"
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "Q": {
+            "item": "minecraft:redstone_torch"
+        },
+        "B": {
+            "item": "minecraft:blue_wool"
+        },
+        "Y": {
+            "item": "minecraft:red_wool"
+        },
+        "L": {
+            "item": "minecraft:lime_wool"
+        }
+    },
+    "result": {
+        "item": "propellerhats:iron_hat",
+        "count": 1
+    }
+}

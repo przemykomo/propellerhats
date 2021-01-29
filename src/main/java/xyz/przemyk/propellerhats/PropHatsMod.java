@@ -6,9 +6,11 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +19,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 import xyz.przemyk.propellerhats.network.NetworkHandler;
+import xyz.przemyk.propellerhats.recipes.HatUpgradeRecipe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +50,11 @@ public class PropHatsMod {
         ITEMS.register(bus);
         SOUND_EVENTS.register(bus);
         NetworkHandler.registerMessages();
+        bus.addGenericListener(IRecipeSerializer.class, this::registerRecipeSerializers);
+    }
+
+    private void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+        event.getRegistry().register(HatUpgradeRecipe.SERIALIZER);
     }
 
     public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterial.IRON, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 70_000, 30, 0.1f));

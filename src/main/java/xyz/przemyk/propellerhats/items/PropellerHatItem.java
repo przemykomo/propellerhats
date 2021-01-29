@@ -84,7 +84,7 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
-        if (!player.isSpectator() && PropHatsMod.isHoldingUp(player) && (player.isCreative() || stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false))) {
+        if (!player.isSpectator() && PropHatsMod.isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false)) {
             Vector3d motion = player.getMotion();
             if (motion.y < speed + 0.2) {
                 player.setMotion(motion.x, motion.y + speed, motion.z);

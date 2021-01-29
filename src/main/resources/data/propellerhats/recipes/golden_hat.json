@@ -1,0 +1,22 @@
+{
+    "type": "propellerhats:hat_upgrade",
+    "pattern": [
+        "ggg",
+        "RGR"
+    ],
+    "key": {
+        "g": {
+            "item": "minecraft:gold_ingot"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "G": {
+            "item": "propellerhats:iron_hat"
+        }
+    },
+    "result": {
+        "item": "propellerhats:golden_hat",
+        "count": 1
+    }
+}

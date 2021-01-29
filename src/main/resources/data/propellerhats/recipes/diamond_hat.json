@@ -1,0 +1,22 @@
+{
+    "type": "propellerhats:hat_upgrade",
+    "pattern": [
+        "ddd",
+        "RGR"
+    ],
+    "key": {
+        "d": {
+            "item": "minecraft:diamond"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "G": {
+            "item": "propellerhats:golden_hat"
+        }
+    },
+    "result": {
+        "item": "propellerhats:diamond_hat",
+        "count": 1
+    }
+}
