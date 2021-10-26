@@ -19,15 +19,15 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             if (event.phase == TickEvent.Phase.START) {
-                boolean flyState = mc.gameSettings.keyBindJump.isKeyDown();
+                boolean flyState = mc.options.keyJump.isDown();
                 if (flyState != lastFlyState) {
                     PropHatsMod.setHoldingUp(mc.player, flyState);
                     lastFlyState = flyState;
                     NetworkHandler.INSTANCE.sendToServer(new FlyPacket(flyState));
                 }
             } else {
-                if (PropHatsMod.isFlying(mc.player) && !PropellerSound.isPlaying(mc.player.getEntityId())) {
-                    mc.getSoundHandler().play(new PropellerSound(mc.player));
+                if (PropHatsMod.isFlying(mc.player) && !PropellerSound.isPlaying(mc.player.getId())) {
+                    mc.getSoundManager().play(new PropellerSound(mc.player));
                 }
             }
         }

@@ -1,22 +1,14 @@
 package xyz.przemyk.propellerhats.energy;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class ItemEnergyStorage implements IEnergyStorage {
+public record ItemEnergyStorage(ItemStack itemStack, int capacity) implements IEnergyStorage {
 
-    private final ItemStack itemStack;
-    private final int capacity;
-
-    public ItemEnergyStorage(ItemStack itemStack, int capacity) {
-        this.itemStack = itemStack;
-        this.capacity = capacity;
-    }
-
-    private CompoundNBT getTag() {
+    private CompoundTag getTag() {
         if (!itemStack.hasTag()) {
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag tag = new CompoundTag();
             itemStack.setTag(tag);
         }
         return itemStack.getTag();
@@ -24,7 +16,7 @@ public class ItemEnergyStorage implements IEnergyStorage {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        CompoundNBT tag = getTag();
+        CompoundTag tag = getTag();
         int energy = tag.getInt("Energy");
         int energyReceived = Math.min(capacity - energy, maxReceive);
 
@@ -37,7 +29,7 @@ public class ItemEnergyStorage implements IEnergyStorage {
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        CompoundNBT tag = getTag();
+        CompoundTag tag = getTag();
         int energy = tag.getInt("Energy");
         int energyExtracted = Math.min(energy, maxExtract);
 

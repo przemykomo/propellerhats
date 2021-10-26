@@ -1,20 +1,20 @@
 package xyz.przemyk.propellerhats;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
@@ -28,9 +28,9 @@ import java.util.Map;
 @Mod(PropHatsMod.MODID)
 public class PropHatsMod {
     public static final String MODID = "propellerhats";
-    private static final Map<PlayerEntity, Boolean> HOLDING_UP = new HashMap<>();
+    private static final Map<Player, Boolean> HOLDING_UP = new HashMap<>();
 
-    public static boolean isHoldingUp(PlayerEntity playerEntity) {
+    public static boolean isHoldingUp(Player playerEntity) {
         if (!HOLDING_UP.containsKey(playerEntity)) {
             HOLDING_UP.put(playerEntity, false);
         }
@@ -38,7 +38,7 @@ public class PropHatsMod {
         return HOLDING_UP.get(playerEntity);
     }
 
-    public static void setHoldingUp(PlayerEntity playerEntity, boolean value) {
+    public static void setHoldingUp(Player playerEntity, boolean value) {
         HOLDING_UP.put(playerEntity, value);
     }
 
@@ -50,26 +50,32 @@ public class PropHatsMod {
         ITEMS.register(bus);
         SOUND_EVENTS.register(bus);
         NetworkHandler.registerMessages();
-        bus.addGenericListener(IRecipeSerializer.class, this::registerRecipeSerializers);
+        bus.addGenericListener(RecipeSerializer.class, this::registerRecipeSerializers);
     }
 
-    private void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+    private void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
         event.getRegistry().register(HatUpgradeRecipe.SERIALIZER);
     }
 
-    public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterial.IRON, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 70_000, 30, 0.1f));
-    public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterial.GOLD, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 100_000, 40, 0.16f));
-    public static final RegistryObject<PropellerHatItem> DIAMOND_HAT = ITEMS.register("diamond_hat", () -> new PropellerHatItem(ArmorMaterial.DIAMOND, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 500_000, 150, 0.22f));
-    public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterial.NETHERITE, new Item.Properties().group(ItemGroup.COMBAT).maxStackSize(1), 1_000_000, 250, 0.3f));
+    public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterials.IRON, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 70_000, 30, 0.1f));
+    public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterials.GOLD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 100_000, 40, 0.16f));
+    public static final RegistryObject<PropellerHatItem> DIAMOND_HAT = ITEMS.register("diamond_hat", () -> new PropellerHatItem(ArmorMaterials.DIAMOND, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 500_000, 150, 0.22f));
+    public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterials.NETHERITE, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 1_000_000, 250, 0.3f));
+    public static final RegistryObject<PropellerHatItem> CREATIVE_HAT = ITEMS.register("creative_hat", () -> new PropellerHatItem(ArmorMaterials.NETHERITE, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 1, 0, 0.3f) {
+        @Override
+        public boolean showDurabilityBar(ItemStack stack) {
+            return false;
+        }
+    });
 
     public static final RegistryObject<SoundEvent> PROPELLER_SOUND_EVENT = SOUND_EVENTS.register("propeller", () -> new SoundEvent(new ResourceLocation(MODID, "propeller")));
 
-    public static boolean isFlying(PlayerEntity player) {
-        ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.HEAD);
+    public static boolean isFlying(Player player) {
+        ItemStack stack = player.getItemBySlot(EquipmentSlot.HEAD);
         return !stack.isEmpty() && stack.getItem() instanceof PropellerHatItem && isFlyingIgnoreItemType(player, stack);
     }
 
-    public static boolean isFlyingIgnoreItemType(PlayerEntity player, ItemStack stack) {
-        return isHoldingUp(player) && stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false);
+    public static boolean isFlyingIgnoreItemType(Player player, ItemStack stack) {
+        return isHoldingUp(player) && (stack.getItem() == CREATIVE_HAT.get() || stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false));
     }
 }

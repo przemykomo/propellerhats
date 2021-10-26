@@ -1,25 +1,25 @@
 package xyz.przemyk.propellerhats.client;
 
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundSource;
 import xyz.przemyk.propellerhats.PropHatsMod;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PropellerSound extends TickableSound {
+public class PropellerSound extends AbstractTickableSoundInstance {
 
     private static final Map<Integer, PropellerSound> PLAYING_FOR = Collections.synchronizedMap(new HashMap<>());
-    private final PlayerEntity player;
+    private final Player player;
     private int fadeOut = -1;
 
-    protected PropellerSound(PlayerEntity player) {
-        super(PropHatsMod.PROPELLER_SOUND_EVENT.get(), SoundCategory.PLAYERS);
+    protected PropellerSound(Player player) {
+        super(PropHatsMod.PROPELLER_SOUND_EVENT.get(), SoundSource.PLAYERS);
         this.player = player;
-        this.repeat = true;
-        PLAYING_FOR.put(player.getEntityId(), this);
+        this.looping = true;
+        PLAYING_FOR.put(player.getId(), this);
     }
 
     public static boolean isPlaying(int entityId) {
@@ -27,24 +27,24 @@ public class PropellerSound extends TickableSound {
             return false;
         }
         PropellerSound sound = PLAYING_FOR.get(entityId);
-        return sound != null && !sound.isDonePlaying();
+        return sound != null && !sound.isStopped();
     }
 
     @Override
     public void tick() {
         if (player.isSpectator()) {
-            finishPlaying();
+            stop();
         }
-        x = player.getPosX();
-        y = player.getPosY();
-        z = player.getPosZ();
+        x = player.getX();
+        y = player.getY();
+        z = player.getZ();
         if (fadeOut < 0 && !PropHatsMod.isFlying(player)) {
             fadeOut = 0;
             synchronized (PLAYING_FOR) {
-                PLAYING_FOR.remove(player.getEntityId());
+                PLAYING_FOR.remove(player.getId());
             }
         } else if (fadeOut >= 5) {
-            finishPlaying();
+            stop();
         } else if (fadeOut >= 0) {
             volume = 1.0F - fadeOut / 5F;
             fadeOut++;

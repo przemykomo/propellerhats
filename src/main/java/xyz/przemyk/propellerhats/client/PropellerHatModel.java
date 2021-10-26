@@ -2,60 +2,68 @@ package xyz.przemyk.propellerhats.client;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.propellerhats.PropHatsMod;
 
-public class PropellerHatModel extends BipedModel<LivingEntity> {
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class PropellerHatModel extends HumanoidModel<LivingEntity> {
 
-    public static final PropellerHatModel INSTANCE = new PropellerHatModel();
+    public static PropellerHatModel INSTANCE;
 
-    private final ModelRenderer main;
-    private final ModelRenderer bone;
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(PropHatsMod.MODID, "hat"), "main");
 
-    public PropellerHatModel() {
-        super(1.0F);
-        textureWidth = 64;
-        textureHeight = 64;
+    public PropellerHatModel(ModelPart root) {
+        super(root);
+    }
 
-        main = new ModelRenderer(this);
-        main.setRotationPoint(0.0F, 16.0F, 0.0F);
-        main.setTextureOffset(0, 0).addBox(-0.5F, -12.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, false);
-        main.setTextureOffset(20, 15).addBox(-5.0F, -9.0F, -5.0F, 10.0F, 3.0F, 1.0F, 0.0F, false);
-        main.setTextureOffset(20, 11).addBox(-5.0F, -9.0F, 4.0F, 10.0F, 3.0F, 1.0F, 0.0F, false);
-        main.setTextureOffset(10, 14).addBox(4.0F, -9.0F, -4.0F, 1.0F, 3.0F, 8.0F, 0.0F, false);
-        main.setTextureOffset(0, 11).addBox(-5.0F, -9.0F, -4.0F, 1.0F, 3.0F, 8.0F, 0.0F, false);
-        main.setTextureOffset(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 1.0F, 8.0F, 0.0F, false);
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
-        bone = new ModelRenderer(this);
-        bone.setRotationPoint(0.0F, 3.0F, 0.0F);
-        main.addChild(bone);
-        bone.setTextureOffset(22, 22).addBox(-0.5F, -16.0F, 0.5F, 1.0F, 1.0F, 6.0F, 0.0F, false);
-        bone.setTextureOffset(0, 22).addBox(-0.5F, -16.0F, -6.5F, 1.0F, 1.0F, 6.0F, 0.0F, false);
-        bone.setTextureOffset(0, 9).addBox(-6.5F, -16.0F, -0.5F, 13.0F, 1.0F, 1.0F, 0.0F, false);
+        PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
+        head.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(0, 15).addBox(-5.0F, -4.0F, -5.0F, 10.0F, 4.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -5.0F, 0.0F));
+        head.addOrReplaceChild("propeller", CubeListBuilder.create().texOffs(0, 0).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 3).addBox(-7.5F, -3.0F, -1.5F, 15.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 29).addBox(-1.5F, -3.0F, -7.5F, 3.0F, 1.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -9.0F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
-    protected Iterable<ModelRenderer> getHeadParts() {
-        main.rotationPointY = bipedHead.rotationPointY;
-        main.rotateAngleZ = bipedHead.rotateAngleZ;
-        main.rotateAngleX = bipedHead.rotateAngleX;
-        main.rotateAngleY = bipedHead.rotateAngleY;
-        return ImmutableList.of(main);
-    }
-
-    @Override
-    protected Iterable<ModelRenderer> getBodyParts() {
+    protected Iterable<ModelPart> bodyParts() {
         return ImmutableList.of();
     }
 
     public void rotate(LivingEntity entity, ItemStack itemStack) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (entity instanceof PlayerEntity && PropHatsMod.isFlyingIgnoreItemType((PlayerEntity) entity, itemStack)) {
-            bone.rotateAngleY = (entity.ticksExisted + (minecraft.isGamePaused() ? 0 : minecraft.getRenderPartialTicks())) / 2f;
+        if (entity instanceof Player && PropHatsMod.isFlyingIgnoreItemType((Player) entity, itemStack)) {
+            head.getChild("propeller").yRot = (entity.tickCount + (minecraft.isPaused() ? 0 : minecraft.getFrameTime())) / 2f;
+        } else {
+            head.getChild("propeller").yRot = 0;
         }
+    }
+
+    @SubscribeEvent
+    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(LAYER_LOCATION, PropellerHatModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
+    public static void bakeModelLayers(EntityRenderersEvent.AddLayers event) {
+        EntityModelSet entityModelSet = event.getEntityModels();
+        INSTANCE = new PropellerHatModel(entityModelSet.bakeLayer(LAYER_LOCATION));
     }
 }

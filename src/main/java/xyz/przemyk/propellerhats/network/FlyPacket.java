@@ -1,10 +1,10 @@
 package xyz.przemyk.propellerhats.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.przemyk.propellerhats.PropHatsMod;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 
@@ -18,20 +18,20 @@ public class FlyPacket {
         this.start = start;
     }
 
-    public FlyPacket(PacketBuffer buffer) {
+    public FlyPacket(FriendlyByteBuf buffer) {
         this.start = buffer.readBoolean();
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeBoolean(start);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.getSender();
+            ServerPlayer player = ctx.getSender();
             if (player != null) {
-                ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.HEAD);
+                ItemStack stack = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (stack.getItem() instanceof PropellerHatItem) {
                     PropHatsMod.setHoldingUp(player, start);
                 }
