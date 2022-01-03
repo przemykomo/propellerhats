@@ -14,9 +14,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 import xyz.przemyk.propellerhats.network.NetworkHandler;
 import xyz.przemyk.propellerhats.recipes.HatUpgradeRecipe;
@@ -63,7 +63,7 @@ public class PropHatsMod {
     public static final RegistryObject<PropellerHatItem> NETHERITE_HAT = ITEMS.register("netherite_hat", () -> new PropellerHatItem(ArmorMaterials.NETHERITE, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 1_000_000, 250, 0.3f));
     public static final RegistryObject<PropellerHatItem> CREATIVE_HAT = ITEMS.register("creative_hat", () -> new PropellerHatItem(ArmorMaterials.NETHERITE, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 1, 0, 0.3f) {
         @Override
-        public boolean showDurabilityBar(ItemStack stack) {
+        public boolean isBarVisible(ItemStack stack) {
             return false;
         }
     });

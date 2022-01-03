@@ -5,7 +5,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.IItemRenderProperties;
-import xyz.przemyk.propellerhats.items.PropellerHatItem;
 
 public final class PropellerHatRenderProperties implements IItemRenderProperties {
 

@@ -59,21 +59,23 @@ public class PropellerHatItem extends ArmorItem {
         return new CapabilityProviderEnergy(new ItemEnergyStorage(stack, energyCapacity));
     }
 
+
+
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
         return 0x00000BD5;
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
+    public int getBarWidth(ItemStack stack) {
         return stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> {
             int capacity = energy.getMaxEnergyStored();
-            return ((double) (capacity - energy.getEnergyStored())) / capacity;
-        }).orElse(0.0);
+            return 13 - (int)((capacity - energy.getEnergyStored()) * 13.0f) / capacity;
+        }).orElse(0);
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         return true;
     }
 
