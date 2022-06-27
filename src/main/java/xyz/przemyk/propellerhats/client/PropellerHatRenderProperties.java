@@ -12,10 +12,9 @@ public final class PropellerHatRenderProperties implements IItemRenderProperties
 
     private PropellerHatRenderProperties() {}
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, A _default) {
+    public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
         PropellerHatModel.INSTANCE.rotate(entityLiving, itemStack);
-        return (A) PropellerHatModel.INSTANCE;
+        return PropellerHatModel.INSTANCE;
     }
 }

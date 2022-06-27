@@ -2,7 +2,6 @@ package xyz.przemyk.propellerhats.items;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -16,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.propellerhats.PropHatsMod;
 import xyz.przemyk.propellerhats.client.PropellerHatRenderProperties;
 import xyz.przemyk.propellerhats.energy.CapabilityProviderEnergy;
@@ -46,7 +46,7 @@ public class PropellerHatItem extends ArmorItem {
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        ResourceLocation registryName = getRegistryName();
+        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(this);
         if (registryName == null) {
             return null;
         }
@@ -58,8 +58,6 @@ public class PropellerHatItem extends ArmorItem {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new CapabilityProviderEnergy(new ItemEnergyStorage(stack, energyCapacity));
     }
-
-
 
     @Override
     public int getBarColor(ItemStack stack) {
@@ -93,7 +91,7 @@ public class PropellerHatItem extends ArmorItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         if (CapabilityEnergy.ENERGY != null) {
-            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energy -> tooltip.add(new TextComponent("Energy: " + energy.getEnergyStored() + "FE")));
+            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energy -> tooltip.add(Component.translatable("text." + PropHatsMod.MODID + ".energy", energy.getEnergyStored())));
         }
     }
 }

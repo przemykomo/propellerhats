@@ -111,7 +111,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:solargeneration-336538:3570688")
+    implementation fg.deobf("curse.maven:charging-gadgets-399757:3828008")
 //    compileOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:api")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:additions")

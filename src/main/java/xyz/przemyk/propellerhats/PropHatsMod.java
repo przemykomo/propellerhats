@@ -1,16 +1,15 @@
 package xyz.przemyk.propellerhats;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -19,7 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 import xyz.przemyk.propellerhats.network.NetworkHandler;
-import xyz.przemyk.propellerhats.recipes.HatUpgradeRecipe;
+import xyz.przemyk.propellerhats.recipes.HatUpgradeRecipeSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,20 +41,19 @@ public class PropHatsMod {
         HOLDING_UP.put(playerEntity, value);
     }
 
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
 
     public PropHatsMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        RECIPE_SERIALIZERS.register(bus);
         ITEMS.register(bus);
         SOUND_EVENTS.register(bus);
         NetworkHandler.registerMessages();
-        bus.addGenericListener(RecipeSerializer.class, this::registerRecipeSerializers);
     }
 
-    private void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
-        event.getRegistry().register(HatUpgradeRecipe.SERIALIZER);
-    }
+    public static final RegistryObject<RecipeSerializer<?>> HAT_UPGRADE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("hat_upgrade", HatUpgradeRecipeSerializer::new);
 
     public static final RegistryObject<PropellerHatItem> IRON_HAT = ITEMS.register("iron_hat", () -> new PropellerHatItem(ArmorMaterials.IRON, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 70_000, 30, 0.1f));
     public static final RegistryObject<PropellerHatItem> GOLDEN_HAT = ITEMS.register("golden_hat", () -> new PropellerHatItem(ArmorMaterials.GOLD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).stacksTo(1), 100_000, 40, 0.16f));

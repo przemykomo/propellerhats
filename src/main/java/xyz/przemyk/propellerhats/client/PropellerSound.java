@@ -1,6 +1,7 @@
 package xyz.przemyk.propellerhats.client;
 
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.sounds.SoundSource;
 import xyz.przemyk.propellerhats.PropHatsMod;
@@ -16,7 +17,7 @@ public class PropellerSound extends AbstractTickableSoundInstance {
     private int fadeOut = -1;
 
     protected PropellerSound(Player player) {
-        super(PropHatsMod.PROPELLER_SOUND_EVENT.get(), SoundSource.PLAYERS);
+        super(PropHatsMod.PROPELLER_SOUND_EVENT.get(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         this.player = player;
         this.looping = true;
         PLAYING_FOR.put(player.getId(), this);
