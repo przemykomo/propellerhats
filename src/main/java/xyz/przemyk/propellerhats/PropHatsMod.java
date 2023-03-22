@@ -9,7 +9,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -74,6 +74,6 @@ public class PropHatsMod {
     }
 
     public static boolean isFlyingIgnoreItemType(Player player, ItemStack stack) {
-        return isHoldingUp(player) && (stack.getItem() == CREATIVE_HAT.get() || stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false));
+        return isHoldingUp(player) && (stack.getItem() == CREATIVE_HAT.get() || stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> energy.getEnergyStored() > 0).orElse(false));
     }
 }

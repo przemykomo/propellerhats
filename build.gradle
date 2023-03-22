@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.1'
+version = '1.0.2'
 version = "${minecraft_version}-${propellerhats_version}"
 group = 'xyz.przemyk.propellerhats'
 archivesBaseName = 'propellerhats'
@@ -111,7 +111,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:charging-gadgets-399757:3828008")
+    implementation fg.deobf("curse.maven:charging-gadgets-399757:3955867")
 //    compileOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:api")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:additions")

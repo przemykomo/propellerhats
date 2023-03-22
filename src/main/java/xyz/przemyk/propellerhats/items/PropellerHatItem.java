@@ -12,9 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.propellerhats.PropHatsMod;
 import xyz.przemyk.propellerhats.client.PropellerHatRenderProperties;
@@ -39,7 +39,7 @@ public class PropellerHatItem extends ArmorItem {
     }
 
     @Override
-    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(PropellerHatRenderProperties.INSTANCE);
     }
 
@@ -66,7 +66,7 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> {
+        return stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> {
             int capacity = energy.getMaxEnergyStored();
             return 13 - (int)((capacity - energy.getEnergyStored()) * 13.0f) / capacity;
         }).orElse(0);
@@ -79,7 +79,7 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public void onArmorTick(ItemStack stack, Level world, Player player) {
-        if (!player.isSpectator() && PropHatsMod.isHoldingUp(player) && (energyUsage == 0 || stack.getCapability(CapabilityEnergy.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false))) {
+        if (!player.isSpectator() && PropHatsMod.isHoldingUp(player) && (energyUsage == 0 || stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false))) {
             Vec3 motion = player.getDeltaMovement();
             if (motion.y < speed + 0.2) {
                 player.setDeltaMovement(motion.x, motion.y + speed, motion.z);
@@ -90,8 +90,8 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        if (CapabilityEnergy.ENERGY != null) {
-            stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energy -> tooltip.add(Component.translatable("text." + PropHatsMod.MODID + ".energy", energy.getEnergyStored())));
+        if (ForgeCapabilities.ENERGY != null) {
+            stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(energy -> tooltip.add(Component.translatable("text." + PropHatsMod.MODID + ".energy", energy.getEnergyStored())));
         }
     }
 }
