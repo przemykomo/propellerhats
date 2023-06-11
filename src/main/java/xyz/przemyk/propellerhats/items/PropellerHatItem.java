@@ -32,7 +32,7 @@ public class PropellerHatItem extends ArmorItem {
     public final float speed;
 
     public PropellerHatItem(ArmorMaterial materialIn, Properties builderIn, int energyCapacity, int energyUsage, float speed) {
-        super(materialIn, EquipmentSlot.HEAD, builderIn);
+        super(materialIn, Type.HELMET, builderIn);
         this.energyCapacity = energyCapacity;
         this.energyUsage = energyUsage;
         this.speed = speed;

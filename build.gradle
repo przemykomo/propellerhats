@@ -86,20 +86,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-//    maven {
-//        // location of the maven that hosts JEI files
-//        name = "Progwml6 maven"
-//        url = "https://dvs1.progwml6.com/files/maven/"
-//    }
-//    maven {
-//        // location of a maven mirror for JEI files, as a fallback
-//        name = "mod maven"
-//        url = "https://modmaven.k-4u.nl/"
-//    }
-//    maven {
-//        name = "progwm16 maven"
-//        url = "https://dvs1.progwml6.com/files/maven/"
-//    }
+    maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI
+    maven { name = "blamejared";     url = "https://maven.blamejared.com" }
+    maven { name = "ModMaven";       url = "https://modmaven.dev" }
     maven {
         url "https://cursemaven.com"
         content {
@@ -111,17 +100,18 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("curse.maven:charging-gadgets-399757:3955867")
+//    implementation fg.deobf("curse.maven:charging-gadgets-399757:3955867")
+    implementation fg.deobf("curse.maven:energized-power-782147:4573938")
 //    compileOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:api")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:additions")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:generators")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.18.445:tools")
 
-    // compile against the JEI API but do not include it at runtime
-//    compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65:api")
-    // at runtime, use the full JEI jar
-//    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 }
 
 jar {

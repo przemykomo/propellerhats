@@ -11,7 +11,7 @@ public class HatUpgradeRecipeSerializer extends ShapedRecipe.Serializer {
     public HatUpgradeRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
         ShapedRecipe shapedRecipe = super.fromJson(recipeId, json);
 
-        return new HatUpgradeRecipe(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getWidth(), shapedRecipe.getHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
+        return new HatUpgradeRecipe(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getWidth(), shapedRecipe.getHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem(null));
     }
 
     @Override
@@ -21,6 +21,6 @@ public class HatUpgradeRecipeSerializer extends ShapedRecipe.Serializer {
             return null;
         }
 
-        return new HatUpgradeRecipe(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getWidth(), shapedRecipe.getHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
+        return new HatUpgradeRecipe(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getWidth(), shapedRecipe.getHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem(null));
     }
 }

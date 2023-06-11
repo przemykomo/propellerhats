@@ -1,12 +1,15 @@
 {
-    "type": "minecraft:smithing",
-    "base": {
-        "item": "propellerhats:diamond_hat"
-    },
+    "type": "minecraft:smithing_transform",
     "addition": {
         "item": "minecraft:netherite_ingot"
     },
+    "base": {
+        "item": "propellerhats:diamond_hat"
+    },
     "result": {
         "item": "propellerhats:netherite_hat"
+    },
+    "template": {
+        "item": "minecraft:netherite_upgrade_smithing_template"
     }
 }
