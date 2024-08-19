@@ -1,6 +1,7 @@
 package xyz.przemyk.propellerhats.items;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -12,18 +13,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import xyz.przemyk.propellerhats.PropHatsMod;
-import xyz.przemyk.propellerhats.client.PropellerHatRenderProperties;
-import xyz.przemyk.propellerhats.energy.CapabilityProviderEnergy;
-import xyz.przemyk.propellerhats.energy.ItemEnergyStorage;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class PropellerHatItem extends ArmorItem {
 
@@ -31,32 +25,17 @@ public class PropellerHatItem extends ArmorItem {
     public final int energyUsage;
     public final float speed;
 
-    public PropellerHatItem(ArmorMaterial materialIn, Properties builderIn, int energyCapacity, int energyUsage, float speed) {
-        super(materialIn, Type.HELMET, builderIn);
+    public PropellerHatItem(Holder<ArmorMaterial> pMaterial, Properties builderIn, int energyCapacity, int energyUsage, float speed) {
+        super(pMaterial, Type.HELMET, builderIn);
         this.energyCapacity = energyCapacity;
         this.energyUsage = energyUsage;
         this.speed = speed;
     }
 
     @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(PropellerHatRenderProperties.INSTANCE);
-    }
-
-    @Nullable
-    @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(this);
-        if (registryName == null) {
-            return null;
-        }
-        return registryName.getNamespace() + ":textures/models/armor/" + registryName.getPath() + ".png";
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new CapabilityProviderEnergy(new ItemEnergyStorage(stack, energyCapacity));
+    public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+        ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(this);
+        return ResourceLocation.fromNamespaceAndPath(registryName.getNamespace(), "textures/models/armor/" + registryName.getPath() + ".png");
     }
 
     @Override
@@ -66,10 +45,12 @@ public class PropellerHatItem extends ArmorItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> {
-            int capacity = energy.getMaxEnergyStored();
-            return 13 - (int)((capacity - energy.getEnergyStored()) * 13.0f) / capacity;
-        }).orElse(0);
+        IEnergyStorage energyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energyStorage == null) {
+            return 0;
+        }
+        int capacity = energyStorage.getMaxEnergyStored();
+        return 13 - (int) ((capacity - energyStorage.getEnergyStored()) * 13.0f) / capacity;
     }
 
     @Override
@@ -78,8 +59,16 @@ public class PropellerHatItem extends ArmorItem {
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, Level world, Player player) {
-        if (!player.isSpectator() && PropHatsMod.isHoldingUp(player) && (energyUsage == 0 || stack.getCapability(ForgeCapabilities.ENERGY).map(energy -> energy.extractEnergy(energyUsage, false) > 0).orElse(false))) {
+    public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
+        if (pSlotId == 39 && pEntity instanceof Player player && !player.isSpectator() && PropHatsMod.isHoldingUp(player)) {
+            if (energyUsage > 0) {
+                IEnergyStorage energyStorage = pStack.getCapability(Capabilities.EnergyStorage.ITEM);
+                if (energyStorage != null) {
+                    if (energyStorage.extractEnergy(energyUsage, false) == 0) {
+                        return;
+                    }
+                }
+            }
             Vec3 motion = player.getDeltaMovement();
             if (motion.y < speed + 0.2) {
                 player.setDeltaMovement(motion.x, motion.y + speed, motion.z);
@@ -89,9 +78,10 @@ public class PropellerHatItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        if (ForgeCapabilities.ENERGY != null) {
-            stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(energy -> tooltip.add(Component.translatable("text." + PropHatsMod.MODID + ".energy", energy.getEnergyStored())));
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        IEnergyStorage energyStorage = pStack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energyStorage != null) {
+            pTooltipComponents.add(Component.translatable("text." + PropHatsMod.MODID + ".energy", energyStorage.getEnergyStored()));
         }
     }
 }

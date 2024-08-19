@@ -1,42 +1,39 @@
 package xyz.przemyk.propellerhats.network;
 
-import net.minecraft.server.level.ServerPlayer;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.propellerhats.PropHatsMod;
 import xyz.przemyk.propellerhats.items.PropellerHatItem;
 
-import java.util.function.Supplier;
+public record FlyPacket(boolean start) implements CustomPacketPayload {
 
-public class FlyPacket {
+    public static final CustomPacketPayload.Type<FlyPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(PropHatsMod.MODID, "fly_packet"));
 
-    private final boolean start; // true -> player starts holding a button, false -> player stops holding a button
+    public static final StreamCodec<ByteBuf, FlyPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL,
+        FlyPacket::start,
+        FlyPacket::new
+    );
 
-    public FlyPacket(boolean start) {
-        this.start = start;
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public FlyPacket(FriendlyByteBuf buffer) {
-        this.start = buffer.readBoolean();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeBoolean(start);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            if (player != null) {
-                ItemStack stack = player.getItemBySlot(EquipmentSlot.HEAD);
-                if (stack.getItem() instanceof PropellerHatItem) {
-                    PropHatsMod.setHoldingUp(player, start);
-                }
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            ItemStack stack = player.getItemBySlot(EquipmentSlot.HEAD);
+            if (stack.getItem() instanceof PropellerHatItem) {
+                PropHatsMod.setHoldingUp(player, start);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

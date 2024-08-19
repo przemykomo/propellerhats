@@ -16,7 +16,7 @@
         }
     },
     "result": {
-        "item": "propellerhats:golden_hat",
+        "id": "propellerhats:golden_hat",
         "count": 1
     }
 }

@@ -12,18 +12,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import xyz.przemyk.propellerhats.PropHatsMod;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class PropellerHatModel extends HumanoidModel<LivingEntity> {
 
     public static PropellerHatModel INSTANCE;
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(PropHatsMod.MODID, "hat"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PropHatsMod.MODID, "hat"), "main");
 
     public PropellerHatModel(ModelPart root) {
         super(root);
@@ -50,7 +51,7 @@ public class PropellerHatModel extends HumanoidModel<LivingEntity> {
     public void rotate(LivingEntity entity, ItemStack itemStack) {
         Minecraft minecraft = Minecraft.getInstance();
         if (entity instanceof Player && PropHatsMod.isFlyingIgnoreItemType((Player) entity, itemStack)) {
-            head.getChild("propeller").yRot = (entity.tickCount + (minecraft.isPaused() ? 0 : minecraft.getFrameTime())) / 2f;
+            head.getChild("propeller").yRot = (entity.tickCount + (minecraft.isPaused() ? 0 : minecraft.getTimer().getGameTimeDeltaPartialTick(false))) / 2f;
         } else {
             head.getChild("propeller").yRot = 0;
         }
@@ -65,5 +66,10 @@ public class PropellerHatModel extends HumanoidModel<LivingEntity> {
     public static void bakeModelLayers(EntityRenderersEvent.AddLayers event) {
         EntityModelSet entityModelSet = event.getEntityModels();
         INSTANCE = new PropellerHatModel(entityModelSet.bakeLayer(LAYER_LOCATION));
+    }
+
+    @SubscribeEvent
+    public static void initHatRenderer(RegisterClientExtensionsEvent event) {
+        event.registerItem(PropellerHatRenderProperties.INSTANCE, PropHatsMod.IRON_HAT, PropHatsMod.GOLDEN_HAT, PropHatsMod.DIAMOND_HAT, PropHatsMod.NETHERITE_HAT, PropHatsMod.CREATIVE_HAT);
     }
 }

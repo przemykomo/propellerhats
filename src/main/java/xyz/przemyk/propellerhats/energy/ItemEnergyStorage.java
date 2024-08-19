@@ -1,27 +1,18 @@
 package xyz.przemyk.propellerhats.energy;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import xyz.przemyk.propellerhats.PropHatsMod;
 
 public record ItemEnergyStorage(ItemStack itemStack, int capacity) implements IEnergyStorage {
 
-    private CompoundTag getTag() {
-        if (!itemStack.hasTag()) {
-            CompoundTag tag = new CompoundTag();
-            itemStack.setTag(tag);
-        }
-        return itemStack.getTag();
-    }
-
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        CompoundTag tag = getTag();
-        int energy = tag.getInt("Energy");
+        int energy = itemStack.getOrDefault(PropHatsMod.ENERGY, 0);
         int energyReceived = Math.min(capacity - energy, maxReceive);
 
         if (!simulate) {
-            tag.putInt("Energy", energy + energyReceived);
+            itemStack.set(PropHatsMod.ENERGY, energy + energyReceived);
         }
 
         return energyReceived;
@@ -29,12 +20,11 @@ public record ItemEnergyStorage(ItemStack itemStack, int capacity) implements IE
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        CompoundTag tag = getTag();
-        int energy = tag.getInt("Energy");
+        int energy = itemStack.getOrDefault(PropHatsMod.ENERGY, 0);
         int energyExtracted = Math.min(energy, maxExtract);
 
         if (!simulate) {
-            tag.putInt("Energy", energy - energyExtracted);
+            itemStack.set(PropHatsMod.ENERGY, energy - energyExtracted);
         }
 
         return energyExtracted;
@@ -42,7 +32,7 @@ public record ItemEnergyStorage(ItemStack itemStack, int capacity) implements IE
 
     @Override
     public int getEnergyStored() {
-        return getTag().getInt("Energy");
+        return itemStack.getOrDefault(PropHatsMod.ENERGY, 0);
     }
 
     @Override

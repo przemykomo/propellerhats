@@ -7,7 +7,8 @@
         "item": "propellerhats:diamond_hat"
     },
     "result": {
-        "item": "propellerhats:netherite_hat"
+        "id": "propellerhats:netherite_hat",
+        "count": 1
     },
     "template": {
         "item": "minecraft:netherite_upgrade_smithing_template"

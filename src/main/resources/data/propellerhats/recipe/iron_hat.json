@@ -26,7 +26,7 @@
         }
     },
     "result": {
-        "item": "propellerhats:iron_hat",
+        "id": "propellerhats:iron_hat",
         "count": 1
     }
 }
